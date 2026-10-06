@@ -30,6 +30,8 @@
       #boot {
         position: fixed;
         inset: 0;
+        /* Never swallow clicks meant for the app underneath. */
+        pointer-events: none;
         display: flex;
         flex-direction: column;
         align-items: center;
