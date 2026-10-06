@@ -1,0 +1,101 @@
+/* index.css — Tailwind entry plus the JARVIS HUD chrome. */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+
+  html,
+  body,
+  #root {
+    height: 100%;
+    margin: 0;
+    background: #02080d;
+    color: #38e8ff;
+    font-family: 'Rajdhani', 'Share Tech Mono', ui-monospace, monospace;
+    overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    /* Faint reactor grid so the app never looks like a blank page. */
+    background-image:
+      radial-gradient(circle at 50% 42%, rgba(56, 232, 255, 0.07), transparent 58%),
+      linear-gradient(rgba(56, 232, 255, 0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(56, 232, 255, 0.035) 1px, transparent 1px);
+    background-size: 100% 100%, 46px 46px, 46px 46px;
+  }
+
+  canvas {
+    display: block;
+    touch-action: none;
+  }
+
+  /* High-contrast accessibility mode (toggled in Settings). */
+  .high-contrast {
+    --tw-bg-opacity: 1;
+    filter: contrast(1.25) saturate(1.1);
+  }
+
+  /* Slim HUD scrollbars. */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: rgba(3, 18, 27, 0.6);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(56, 232, 255, 0.32);
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(56, 232, 255, 0.55);
+  }
+
+  input[type='range'] {
+    height: 4px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, rgba(56, 232, 255, 0.5), rgba(56, 232, 255, 0.12));
+    appearance: none;
+  }
+  input[type='range']::-webkit-slider-thumb {
+    appearance: none;
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    background: #38e8ff;
+    box-shadow: 0 0 8px rgba(56, 232, 255, 0.8);
+    cursor: pointer;
+  }
+
+  button:focus-visible,
+  input:focus-visible,
+  select:focus-visible {
+    outline: 2px solid #ff9d3c;
+    outline-offset: 1px;
+  }
+}
+
+@layer utilities {
+  /* Full-screen scanline sweep used behind panels. */
+  .bg-scanline::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(rgba(56, 232, 255, 0.06) 50%, transparent 50%);
+    background-size: 100% 4px;
+    pointer-events: none;
+  }
+
+  .text-glow {
+    text-shadow: 0 0 10px rgba(56, 232, 255, 0.65);
+  }
+  .text-glow-orange {
+    text-shadow: 0 0 10px rgba(255, 157, 60, 0.7);
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "_comment": "COCO-SSD / MobileNet class name → representative molecule. `formula` must match a knownMolecules.json entry.",
+  "map": [
+    {"classes":["bottle","wine glass","cup","cell phone remote","bowl"],"formula":"H2O","name":"water","note":"A drink vessel — mostly water."},
+    {"classes":["banana"],"formula":"C6H12O6","name":"glucose","note":"Bananas are rich in glucose and fructose."},
+    {"classes":["apple","orange","sandwich","carrot","broccoli","hot dog","pizza","donut","cake"],"formula":"C6H8O7","name":"citric acid","note":"Fruit acidity — citric acid."},
+    {"classes":["lemon"],"formula":"C6H8O7","name":"citric acid","note":"Roughly 5% citric acid by mass."},
+    {"classes":["book","laptop","keyboard","mouse","tv","remote"],"formula":"C6H10O5","name":"cellulose","note":"Paper and card are cellulose."},
+    {"classes":["cell phone","laptop","keyboard","mouse"],"formula":"C2H4","name":"polyethene","note":"The casing is a polyolefin."},
+    {"classes":["backpack","handbag","suitcase","tie","umbrella"],"formula":"C12H22N2O2","name":"nylon 6,6","note":"Synthetic polyamide fabric."},
+    {"classes":["bottle","cup"],"formula":"C10H8O4","name":"PET","note":"Drinks bottles are PET."},
+    {"classes":["chair","couch","bed","dining table","bench"],"formula":"C8H8","name":"polystyrene","note":"Foam and moulded plastic."},
+    {"classes":["clock","vase","sink","toilet","refrigerator","microwave","oven","toaster"],"formula":"O2Si","name":"silicon dioxide","note":"Glass, ceramic and enamel."},
+    {"classes":["person","dog","cat","horse","sheep","cow","elephant","bear","zebra","giraffe","bird"],"formula":"H2O","name":"water","note":"About 60% water by mass."},
+    {"classes":["car","bicycle","motorcycle","bus","train","truck","boat","airplane"],"formula":"C8H18","name":"octane","note":"Petroleum hydrocarbons."},
+    {"classes":["potted plant","pottedplant"],"formula":"C6H10O5","name":"cellulose","note":"Plant cell walls."},
+    {"classes":["scissors","knife","spoon","fork","bowl"],"formula":"Cl2Fe","name":"iron(III) chloride","note":"Stainless steel — chromium and iron oxides passivate it."},
+    {"classes":["toothbrush","hair drier","teddy bear"],"formula":"C2H4","name":"polyethene","note":"Polyolefin bristles and fibres."},
+    {"classes":["sports ball","frisbee","skateboard","tennis racket","baseball bat","baseball glove","skis","snowboard","surfboard","kite"],"formula":"C2H4","name":"polyethene","note":"Polymer sports equipment."},
+    {"classes":["traffic light","fire hydrant","stop sign","parking meter"],"formula":"Cl2Fe","name":"iron(III) chloride","note":"Painted steel."},
+    {"classes":["laptop","mouse","keyboard","remote","cell phone","tv"],"formula":"H18CoN6 3+","name":"hexaamminecobalt(III)","note":"Lithium-ion cells use transition-metal complexes."}
+  ],
+  "fallbacks": [
+    "No known compound detected. Try another object.",
+    "I am afraid the scanner found nothing recognisable in that frame, sir.",
+    "Insufficient signal. Present the object more clearly to the camera."
+  ]
+}
