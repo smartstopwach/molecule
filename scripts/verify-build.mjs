@@ -1,5 +1,5 @@
 /**
- * Boots the BUILT bundle (site/assets/index-*.js) inside jsdom with no WebGL and
+ * Boots the BUILT bundle (docs/assets/index-*.js) inside jsdom with no WebGL and
  * no camera. If this prints "MOUNTED", the shipped app boots in a browser-like
  * environment and the boot placeholder is removed.
  */
@@ -7,8 +7,9 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { pathToFileURL } from 'node:url';
 import { JSDOM } from 'jsdom';
 
-const html = readFileSync('site/index.html', 'utf8');
-const entry = readdirSync('site/assets').find((f) => /^index-.*\.js$/.test(f) && !f.includes('coco'));
+const dir = process.argv[2] ?? 'docs';
+const html = readFileSync(`${dir}/index.html`, 'utf8');
+const entry = readdirSync('docs/assets').find((f) => /^index-.*\.js$/.test(f) && !f.includes('coco'));
 
 const dom = new JSDOM(html, { url: 'http://localhost:5173/', pretendToBeVisual: true, runScripts: 'outside-only' });
 const w = dom.window;
@@ -33,7 +34,7 @@ const errors = [];
 w.addEventListener('error', (e) => errors.push(String(e.message || e.target)));
 process.on('unhandledRejection', (e) => errors.push('rejection: ' + e));
 
-await import(pathToFileURL(`site/assets/${entry}`).href);
+await import(pathToFileURL(`docs/assets/${entry}`).href);
 await new Promise((r) => setTimeout(r, 4000));
 
 const root = w.document.getElementById('root');

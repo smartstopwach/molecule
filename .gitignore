@@ -12,5 +12,6 @@ npm-debug.log*
 yarn-error.log*
 .eslintcache
 
-# Self-contained static build served by `npm run serve` (kept out of git).
+# Scratch static build for the sandbox preview (not published).
 site/
+# NOTE: docs/ is intentionally TRACKED — it is the built site GitHub Pages serves.

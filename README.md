@@ -389,10 +389,38 @@ mean it, **lower** sensitivity and increase the specific step.
 
 ## Deploying
 
-Static output in `dist/`; `base: './'` means it works from any sub-path.
+**It is a normal static site.** `npm run build` (or `npm run build:docs`) produces plain
+HTML/CSS/JS in `dist/` (or `docs/`) — no server, no backend, no functions. Upload that
+folder anywhere and it runs.
 
-**GitHub Pages** — `deploy/github-pages.yml` is a ready-made workflow that builds and
-publishes `dist/` on every push to `main` (or any `arena/**` branch). One-time setup:
+### GitHub Pages — the simple way (no Actions, no build step on GitHub)
+
+The built site is committed to **`docs/`**, so GitHub just serves files:
+
+```bash
+npm install
+npm run build:docs     # builds into docs/
+git add docs && git commit -m "chore: rebuild site" && git push
+```
+
+Then once, in the repo: **Settings → Pages → Build and deployment**
+- **Source:** Deploy from a branch
+- **Branch:** your branch (e.g. `main` or `arena/4e92c516-molecule`)
+- **Folder:** **`/docs`** ← the important bit
+- **Save**
+
+The site appears at `https://<user>.github.io/<repo>/` within a minute. Rebuild and push
+`docs/` whenever you change something.
+
+> ⚠️ Do **not** point Pages at the repo root (`/`): that publishes `index.html` with
+> `/src/main.tsx` in it. GitHub cannot compile TypeScript, so the app never starts and you
+> get a boot report saying *"the application script never executed"*. Always publish
+> `docs/` (or `dist/` via Actions).
+
+### Optional: build on GitHub with Actions
+
+If you would rather not commit build output, `deploy/github-pages.yml` builds `dist/` and
+publishes it for you:
 
 ```bash
 mkdir -p .github/workflows
@@ -400,32 +428,16 @@ cp deploy/github-pages.yml .github/workflows/pages.yml
 git add .github && git commit -m "ci: deploy to GitHub Pages" && git push
 ```
 
-1. **Settings → Pages → Build and deployment → Source: "GitHub Actions"** (not
-   "Deploy from a branch").
-2. Push (or run the **Deploy to GitHub Pages** workflow manually from the Actions tab).
+Then set **Settings → Pages → Source: "GitHub Actions"**.
 
-> ⚠️ GitHub Pages cannot compile TypeScript, so pointing Pages at the repo *root* or a
-> *branch* publishes `index.html` with `/src/main.tsx` in it and the app never starts
-> (you get the boot watchdog's "the application script never executed" report). Always
-> publish the **built `dist/`** — that is exactly what the workflow does.
+### Vercel / Netlify / any static host
 
-**Vercel** — `vercel.json` is included (build `npm run build`, output `dist`, plus a
-`Permissions-Policy: camera=(self)` header).
+- **Vercel**: `vercel.json` is included (build `npm run build`, output `dist`).
+- **Netlify**: `netlify.toml` is included (build `npm run build`, publish `dist`).
+- **Anything else**: `npm run build` then upload `dist/` (S3, Cloudflare Pages, Surge, a
+  USB stick — anything that serves files).
 
-```bash
-npx vercel --prod
-```
-
-**Netlify** — `netlify.toml` is included (same command, output `dist`, same headers).
-
-```bash
-npx netlify deploy --prod
-```
-
-**Anywhere else** — `npm run build && npx serve dist`. Serve over **HTTPS**; browsers refuse
-camera access on plain http (except `localhost`).
-
----
+Serve over **HTTPS**; browsers refuse camera access on plain HTTP (except `localhost`).
 
 ## Troubleshooting
 

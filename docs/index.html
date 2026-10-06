@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="theme-color" content="#02080d" />
+    <meta
+      name="description"
+      content="JARVIS LAB — AR Molecule Builder. Build, inspect and react real molecules in 3D using webcam hand gestures. All video is processed on-device; nothing is uploaded."
+    />
+    <title>JARVIS LAB — AR Molecule Builder</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap"
+      rel="stylesheet"
+    />
+    <!--
+      Critical inline CSS: if the JS bundle ever fails to load, the visitor sees the
+      dark lab with an explanatory note instead of an unstyled white page.
+    -->
+    <style>
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        background: #02080d;
+        color: #38e8ff;
+      }
+      #boot {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        font-family: 'Rajdhani', 'Share Tech Mono', ui-monospace, monospace;
+        letter-spacing: 0.26em;
+        text-transform: uppercase;
+        font-size: 13px;
+        text-align: center;
+        padding: 24px;
+        /* Never swallow clicks meant for the app underneath. */
+        pointer-events: none;
+      }
+      #boot[data-fatal='true'] {
+        pointer-events: auto;
+        justify-content: center;
+        gap: 8px;
+      }
+      #boot h1 {
+        margin: 0;
+        font-size: 15px;
+        letter-spacing: 0.26em;
+        color: #ff6b7a;
+      }
+      #boot small {
+        letter-spacing: 0.1em;
+        text-transform: none;
+        opacity: 0.75;
+        max-width: 560px;
+        line-height: 1.55;
+        font-size: 12px;
+      }
+      #boot pre {
+        max-width: 640px;
+        max-height: 30vh;
+        overflow: auto;
+        text-align: left;
+        background: rgba(0, 0, 0, 0.45);
+        border: 1px solid rgba(255, 107, 122, 0.35);
+        border-radius: 6px;
+        padding: 8px 10px;
+        font-size: 11px;
+        letter-spacing: 0;
+        text-transform: none;
+        color: #ffb3bc;
+      }
+      #boot button {
+        margin-top: 6px;
+        background: rgba(56, 232, 255, 0.12);
+        border: 1px solid rgba(56, 232, 255, 0.55);
+        color: #38e8ff;
+        border-radius: 4px;
+        padding: 7px 16px;
+        font-family: inherit;
+        font-size: 12px;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        cursor: pointer;
+      }
+      #boot button:hover {
+        background: rgba(56, 232, 255, 0.24);
+      }
+    </style>
+    <!--
+      Boot watchdog. This runs BEFORE any module is fetched, so it can report
+      failures (404 chunk, blocked script, dead dev server) that would otherwise
+      leave the "Initialising…" placeholder on screen forever with no explanation.
+    -->
+    <script>
+      (function () {
+        var S = (window.__JARVIS__ = {
+          html: Date.now(),
+          main: false,
+          mounted: false,
+          errors: [],
+          note: ''
+        });
+
+        function note(text) {
+          S.note = text;
+          var el = document.getElementById('boot-note');
+          if (el) el.textContent = text;
+        }
+        S.note = note;
+
+        function record(source, detail) {
+          S.errors.push(source + ': ' + detail);
+        }
+
+        // Capture phase: catches resource load failures (script/img/link) too.
+        window.addEventListener(
+          'error',
+          function (event) {
+            var t = event.target;
+            if (t && t !== window && t.tagName && t.tagName !== 'DIV') {
+              var src = t.src || t.href || t.tagName;
+              record('load-failed', String(src));
+            } else if (event.message) {
+              record('error', event.message + ' (' + (event.filename || '?') + ':' + (event.lineno || 0) + ')');
+            }
+          },
+          true
+        );
+        window.addEventListener('unhandledrejection', function (event) {
+          record('promise', String((event.reason && event.reason.message) || event.reason));
+        });
+
+        function env() {
+          var secure = window.isSecureContext;
+          var embedded = false;
+          try {
+            embedded = window.self !== window.top;
+          } catch (e) {
+            embedded = true;
+          }
+          var webgl = false;
+          try {
+            var c = document.createElement('canvas');
+            webgl = !!(c.getContext('webgl2') || c.getContext('webgl'));
+          } catch (e) {
+            webgl = false;
+          }
+          var hasCameraApi = !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
+          return [
+            'origin: ' + location.origin,
+            'secure context: ' + secure,
+            'embedded in a frame: ' + embedded,
+            'webgl: ' + webgl,
+            'getUserMedia available: ' + hasCameraApi,
+            'main.tsx executed: ' + S.main,
+            'react mounted: ' + S.mounted
+          ];
+        }
+
+        function fatal(title, lines) {
+          var boot = document.getElementById('boot');
+          if (!boot || S.mounted) return;
+          boot.setAttribute('data-fatal', 'true');
+          boot.innerHTML = '';
+          var h = document.createElement('h1');
+          h.textContent = title;
+          boot.appendChild(h);
+          lines.forEach(function (line) {
+            var s = document.createElement('small');
+            s.textContent = line;
+            boot.appendChild(s);
+          });
+          if (S.errors.length) {
+            var pre = document.createElement('pre');
+            pre.textContent = S.errors.slice(-6).join('\n');
+            boot.appendChild(pre);
+          }
+          var pre2 = document.createElement('pre');
+          pre2.textContent = env().join('\n');
+          boot.appendChild(pre2);
+          var b = document.createElement('button');
+          b.textContent = 'reload';
+          b.onclick = function () {
+            location.reload();
+          };
+          boot.appendChild(b);
+        }
+
+        // Progressive notes so the screen is never mysterious.
+        setTimeout(function () {
+          if (!S.mounted && S.main) note('Modules loaded — starting the interface…');
+        }, 1500);
+        setTimeout(function () {
+          if (!S.mounted && !S.main) note('Downloading the application bundle…');
+        }, 3000);
+
+        // Final watchdog: explain, never hang silently.
+        setTimeout(function () {
+          if (S.mounted) return;
+          if (!S.main) {
+            var host = location.hostname;
+            var staticHost = /\.github\.io$/.test(host) || /\.netlify\.app$/.test(host) || /\.vercel\.app$/.test(host);
+            fatal('JARVIS LAB could not start', [
+              'The application script never executed.',
+              staticHost
+                ? 'This looks like a static host (GitHub Pages/Netlify/Vercel). Those cannot run TypeScript sources: deploy the BUILT output (dist/), not the repo root. This repository ships .github/workflows/pages.yml — enable Settings → Pages → Source: "GitHub Actions" and push again.'
+                : 'Most often this is a stale page or a dead dev server. Reload; if it persists run "npm install && npm run dev" (or "npm run build && npm run serve") and make sure port 5173 is serving this app.'
+            ]);
+          } else {
+            fatal('JARVIS LAB did not mount', [
+              'The bundle loaded but the interface never rendered.',
+              'Reload the page; if it keeps happening, open the browser console (F12) and check the first error.'
+            ]);
+          }
+        }, 12000);
+
+        S.fatal = fatal;
+      })();
+    </script>
+    <script type="module" crossorigin src="./assets/index-CHBZOeFK.js"></script>
+    <link rel="modulepreload" crossorigin href="./assets/three-BwGYb5W1.js">
+    <link rel="stylesheet" crossorigin href="./assets/index-VRyy04Pl.css">
+  </head>
+  <body class="bg-jarvis-dark text-jarvis-cyan">
+    <div id="root"></div>
+    <div id="boot">
+      <div>Initialising JARVIS LAB…</div>
+      <small id="boot-note"></small>
+    </div>
+    <noscript>JARVIS LAB requires JavaScript and a webcam.</noscript>
+  </body>
+</html>

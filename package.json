@@ -8,13 +8,14 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "build:site": "vite build && rm -rf site && mv dist site",
-    "serve": "node scripts/serve-static.mjs 5173 site",
-    "start": "npm run build:site && npm run serve",
+    "serve": "node scripts/serve-static.mjs 5173 docs",
+    "start": "npm run build:docs && npm run serve",
     "preview": "vite preview --host 0.0.0.0",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "verify:build": "node scripts/verify-build.mjs"
+    "verify:build": "node scripts/verify-build.mjs",
+    "build:docs": "tsc -b && vite build --outDir docs --emptyOutDir"
   },
   "dependencies": {
     "@mediapipe/tasks-vision": "0.10.14",
