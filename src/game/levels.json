@@ -1,0 +1,219 @@
+[
+  {
+    "id": "w1-01", "world": 1, "index": 1, "name": "Hydrogen", "formula": "H2", "smiles": "[H][H]",
+    "difficulty": "strict", "ghost": false,
+    "hint": "Two hydrogen atoms. One single bond — each H can make only one.",
+    "teach": "Hydrogen has one electron and needs one more to fill its 1s shell, so it pairs up as H₂.",
+    "starTimes": [15, 35], "askHybridization": false, "expectedHybridization": "s"
+  },
+  {
+    "id": "w1-02", "world": 1, "index": 2, "name": "Oxygen", "formula": "O2", "smiles": "O=O",
+    "difficulty": "strict", "ghost": false,
+    "hint": "Two oxygens sharing FOUR electrons — promote the bond with a double pinch.",
+    "teach": "Oxygen needs two electrons, so the atoms share two pairs: a double bond, one σ and one π.",
+    "starTimes": [20, 45], "askHybridization": false, "expectedHybridization": "sp2"
+  },
+  {
+    "id": "w1-03", "world": 1, "index": 3, "name": "Nitrogen", "formula": "N2", "smiles": "N#N",
+    "difficulty": "strict", "ghost": false,
+    "hint": "Six shared electrons. Keep pinching to reach a triple bond.",
+    "teach": "The triple bond in N₂ is 941 kJ/mol — one of the strongest bonds in chemistry.",
+    "starTimes": [25, 55], "askHybridization": false, "expectedHybridization": "sp"
+  },
+  {
+    "id": "w1-04", "world": 1, "index": 4, "name": "Water", "formula": "H2O", "smiles": "O",
+    "difficulty": "strict", "ghost": true,
+    "hint": "One oxygen, two hydrogens. Oxygen makes two bonds and keeps two lone pairs.",
+    "teach": "Two lone pairs squeeze the H–O–H angle from 109.5° down to 104.5°, which is why water is bent.",
+    "starTimes": [30, 70], "askHybridization": true, "expectedHybridization": "sp3"
+  },
+  {
+    "id": "w1-05", "world": 1, "index": 5, "name": "Carbon dioxide", "formula": "CO2", "smiles": "O=C=O",
+    "difficulty": "strict", "ghost": true,
+    "hint": "Carbon in the middle with a double bond to each oxygen.",
+    "teach": "Two double bonds = two σ + two π. Linear, so the two C=O dipoles cancel and CO₂ is non-polar.",
+    "starTimes": [40, 90], "askHybridization": true, "expectedHybridization": "sp"
+  },
+  {
+    "id": "w1-06", "world": 1, "index": 6, "name": "Ammonia", "formula": "NH3", "smiles": "N",
+    "difficulty": "strict", "ghost": true,
+    "hint": "Nitrogen makes three bonds and keeps ONE lone pair on top.",
+    "teach": "Four electron domains but only three atoms: trigonal PYRAMIDAL, 107°, and a lone pair that makes ammonia a base.",
+    "starTimes": [40, 90], "askHybridization": true, "expectedHybridization": "sp3"
+  },
+  {
+    "id": "w1-07", "world": 1, "index": 7, "name": "Methane", "formula": "CH4", "smiles": "C",
+    "difficulty": "strict", "ghost": true,
+    "hint": "Four hydrogens around one carbon — the perfect tetrahedron.",
+    "teach": "The textbook sp³ tetrahedron: 109.5°, four identical bonds, completely non-polar.",
+    "starTimes": [45, 100], "askHybridization": true, "expectedHybridization": "sp3"
+  },
+  {
+    "id": "w1-08", "world": 1, "index": 8, "name": "Hydrogen chloride", "formula": "HCl", "smiles": "Cl",
+    "difficulty": "strict", "ghost": false,
+    "hint": "One hydrogen, one chlorine, one single bond.",
+    "teach": "ΔEN = 1.0 — a very polar bond. Dissolve it in water and it becomes hydrochloric acid.",
+    "starTimes": [20, 45], "askHybridization": false, "expectedHybridization": "sp3"
+  },
+  {
+    "id": "w2-01", "world": 2, "index": 1, "name": "Beryllium chloride", "formula": "BeCl2", "smiles": "Cl[Be]Cl",
+    "difficulty": "strict", "ghost": true,
+    "hint": "Beryllium holds only two bonds — the two chlorides push to opposite sides.",
+    "teach": "Only two electron domains: linear, 180°, sp. Beryllium is happy with just four electrons — a Lewis acid.",
+    "starTimes": [35, 80], "askHybridization": true, "expectedHybridization": "sp"
+  },
+  {
+    "id": "w2-02", "world": 2, "index": 2, "name": "Boron trifluoride", "formula": "BF3", "smiles": "FB(F)F",
+    "difficulty": "strict", "ghost": true,
+    "hint": "Three fluorines spread evenly around boron — 120° apart.",
+    "teach": "Three domains, trigonal planar, sp². Boron has an empty p orbital and only six electrons — hungry for a donor.",
+    "starTimes": [40, 90], "askHybridization": true, "expectedHybridization": "sp2"
+  },
+  {
+    "id": "w2-03", "world": 2, "index": 3, "name": "Hydrogen sulfide", "formula": "H2S", "smiles": "S",
+    "difficulty": "strict", "ghost": false,
+    "hint": "Sulfur sits below oxygen — same shape, wider angle.",
+    "teach": "Same valence as oxygen, so bent and sp³ — but the angle is only 92° because sulfur barely hybridises.",
+    "starTimes": [30, 70], "askHybridization": true, "expectedHybridization": "sp3"
+  },
+  {
+    "id": "w2-04", "world": 2, "index": 4, "name": "Phosphorus pentachloride", "formula": "PCl5", "smiles": "ClP(Cl)(Cl)(Cl)Cl",
+    "difficulty": "advanced", "ghost": true,
+    "hint": "Five chlorines. Period 3 can expand the octet — three equatorial, two axial.",
+    "teach": "sp³d, trigonal bipyramidal. The axial bonds are longer and weaker than the equatorial ones.",
+    "starTimes": [70, 150], "askHybridization": true, "expectedHybridization": "sp3d"
+  },
+  {
+    "id": "w2-05", "world": 2, "index": 5, "name": "Sulfur hexafluoride", "formula": "SF6", "smiles": "FS(F)(F)(F)(F)F",
+    "difficulty": "advanced", "ghost": true,
+    "hint": "Six fluorines around sulfur — the classic octahedron.",
+    "teach": "sp³d², octahedral, 90°. Twelve electrons around sulfur — and so inert it is used as an electrical insulator.",
+    "starTimes": [80, 170], "askHybridization": true, "expectedHybridization": "sp3d2"
+  },
+  {
+    "id": "w2-06", "world": 2, "index": 6, "name": "Xenon tetrafluoride", "formula": "XeF4", "smiles": "F[Xe](F)(F)F",
+    "difficulty": "advanced", "ghost": true,
+    "hint": "A noble gas! Four fluorines and TWO lone pairs pushed as far apart as possible.",
+    "teach": "Six domains, two of them lone pairs sitting trans — square planar, sp³d².",
+    "starTimes": [70, 150], "askHybridization": true, "expectedHybridization": "sp3d2"
+  },
+  {
+    "id": "w2-07", "world": 2, "index": 7, "name": "Ammonium", "formula": "NH4⁺", "smiles": "[NH4+]",
+    "difficulty": "advanced", "ghost": false,
+    "hint": "Ammonia plus one more H — give the nitrogen a +1 charge.",
+    "teach": "A dative bond: nitrogen donates its lone pair to H⁺. The result is a perfectly tetrahedral +1 ion.",
+    "starTimes": [50, 110], "askHybridization": true, "expectedHybridization": "sp3"
+  },
+  {
+    "id": "w3-01", "world": 3, "index": 1, "name": "Ethane", "formula": "C2H6", "smiles": "CC",
+    "difficulty": "strict", "ghost": true,
+    "hint": "Two carbons, then fill every carbon with hydrogens.",
+    "teach": "Every carbon is sp³ and tetrahedral. The C–C bond rotates freely — that is what gives conformations.",
+    "starTimes": [60, 130], "askHybridization": true, "expectedHybridization": "sp3"
+  },
+  {
+    "id": "w3-02", "world": 3, "index": 2, "name": "Ethene", "formula": "C2H4", "smiles": "C=C",
+    "difficulty": "strict", "ghost": true,
+    "hint": "Two carbons joined by a DOUBLE bond — four hydrogens in total.",
+    "teach": "sp², planar, 120°. The π bond locks the carbons: no rotation, hence cis/trans isomers.",
+    "starTimes": [50, 120], "askHybridization": true, "expectedHybridization": "sp2"
+  },
+  {
+    "id": "w3-03", "world": 3, "index": 3, "name": "Ethyne", "formula": "C2H2", "smiles": "C#C",
+    "difficulty": "strict", "ghost": true,
+    "hint": "A TRIPLE bond between the carbons — only two hydrogens fit.",
+    "teach": "sp, linear, 180°. Two π bonds and a very short, very strong C≡C — it burns at 3300 °C.",
+    "starTimes": [50, 120], "askHybridization": true, "expectedHybridization": "sp"
+  },
+  {
+    "id": "w3-04", "world": 3, "index": 4, "name": "Ethanol", "formula": "C2H6O", "smiles": "CCO",
+    "difficulty": "strict", "ghost": true,
+    "hint": "Two carbons, then an –OH group on the end carbon.",
+    "teach": "The hydroxyl makes it polar and hydrogen-bonding — that is why ethanol dissolves in water and ethane does not.",
+    "starTimes": [70, 150], "askHybridization": true, "expectedHybridization": "sp3"
+  },
+  {
+    "id": "w3-05", "world": 3, "index": 5, "name": "Ethanoic acid", "formula": "C2H4O2", "smiles": "CC(=O)O",
+    "difficulty": "strict", "ghost": true,
+    "hint": "A carbonyl (C=O) and an –OH on the same carbon: carboxyl.",
+    "teach": "The carboxyl carbon is sp² and planar. The –OH proton is acidic because the anion is resonance stabilised.",
+    "starTimes": [80, 170], "askHybridization": true, "expectedHybridization": "sp2"
+  },
+  {
+    "id": "w3-06", "world": 3, "index": 6, "name": "Cyclohexane", "formula": "C6H12", "smiles": "C1CCCCC1",
+    "difficulty": "strict", "ghost": true,
+    "hint": "Six carbons in a ring — or draw a circle with your finger to build it instantly.",
+    "teach": "It is NOT flat: the chair conformation keeps every angle at 109.5° and every bond staggered.",
+    "starTimes": [110, 220], "askHybridization": true, "expectedHybridization": "sp3"
+  },
+  {
+    "id": "w3-07", "world": 3, "index": 7, "name": "Benzene", "formula": "C6H6", "smiles": "c1ccccc1",
+    "difficulty": "advanced", "ghost": true,
+    "hint": "Six carbons in a ring with delocalised π electrons. Open your palm to flatten it.",
+    "teach": "Six π electrons, Hückel 4n+2 with n = 1: aromatic. Every C–C bond is the same length — 139 pm.",
+    "starTimes": [100, 200], "askHybridization": true, "expectedHybridization": "sp2"
+  },
+  {
+    "id": "w4-01", "world": 4, "index": 1, "name": "Glucose", "formula": "C6H12O6", "smiles": "O=CC(O)C(O)C(O)C(O)CO",
+    "difficulty": "advanced", "ghost": true,
+    "hint": "Six carbons. One is an aldehyde at the end; the other five each carry an –OH.",
+    "teach": "In solution it closes into a pyranose ring — 99.7% of the time. That ring is what starch and cellulose are built from.",
+    "starTimes": [200, 400], "askHybridization": false, "expectedHybridization": "sp3"
+  },
+  {
+    "id": "w4-02", "world": 4, "index": 2, "name": "Glycine", "formula": "C2H5NO2", "smiles": "NCC(=O)O",
+    "difficulty": "advanced", "ghost": true,
+    "hint": "An amine on one end, a carboxylic acid on the other. Two carbons.",
+    "teach": "The simplest amino acid. In water it is a zwitterion: NH₃⁺ on one end, COO⁻ on the other.",
+    "starTimes": [110, 240], "askHybridization": false, "expectedHybridization": "sp3"
+  },
+  {
+    "id": "w4-03", "world": 4, "index": 3, "name": "Urea", "formula": "CH4N2O", "smiles": "NC(N)=O",
+    "difficulty": "advanced", "ghost": true,
+    "hint": "One carbonyl carbon carrying two –NH₂ groups.",
+    "teach": "Wöhler made it from ammonium cyanate in 1828 and killed vitalism — organic chemistry needs no life force.",
+    "starTimes": [90, 200], "askHybridization": false, "expectedHybridization": "sp2"
+  },
+  {
+    "id": "w4-04", "world": 4, "index": 4, "name": "Caffeine", "formula": "C8H10N4O2", "smiles": "Cn1cnc2c1c(=O)n(C)c(=O)n2C",
+    "difficulty": "advanced", "ghost": true,
+    "hint": "A fused purine ring system with three methyl groups and two carbonyls.",
+    "teach": "A flat, aromatic purine that fits neatly into adenosine receptors — blocking them is exactly how it keeps you awake.",
+    "starTimes": [260, 500], "askHybridization": false, "expectedHybridization": "sp2"
+  },
+  {
+    "id": "w5-01", "world": 5, "index": 1, "name": "Aspirin", "formula": "C9H8O4", "smiles": "CC(=O)Oc1ccccc1C(=O)O",
+    "difficulty": "advanced", "ghost": true,
+    "hint": "Benzene ring with a carboxylic acid and an ester (–OCOCH₃) on adjacent carbons.",
+    "teach": "Acetylsalicylic acid. The acetyl group permanently blocks COX enzymes — which is why one dose lasts days.",
+    "starTimes": [260, 520], "askHybridization": false, "expectedHybridization": "sp2"
+  },
+  {
+    "id": "w5-02", "world": 5, "index": 2, "name": "Adenine–thymine pair", "formula": "C10H11N7O2",
+    "difficulty": "sandbox", "ghost": true,
+    "fragments": [
+      { "name": "adenine", "smiles": "Nc1ncnc2[nH]cnc12" },
+      { "name": "thymine", "smiles": "CC1=CNC(=O)NC1=O", "assisted": true }
+    ],
+    "hydrogenBonds": 2,
+    "hint": "Build adenine. JARVIS will bring thymine across and form the two hydrogen bonds.",
+    "teach": "Two hydrogen bonds hold A to T; three hold G to C. That difference is what sets DNA's melting temperature.",
+    "starTimes": [300, 600], "askHybridization": false, "expectedHybridization": "sp2"
+  },
+  {
+    "id": "w5-03", "world": 5, "index": 3, "name": "Hexaamminecobalt(III)", "formula": "H18CoN6³⁺",
+    "smiles": "N([H])([H])([H])[Co+3](N([H])([H])([H]))(N([H])([H])([H]))(N([H])([H])([H]))(N([H])([H])([H]))(N([H])([H])([H]))",
+    "difficulty": "sandbox", "ghost": true,
+    "hint": "A Co³⁺ centre with six ammonia ligands donating their lone pairs.",
+    "teach": "Werner proved this octahedron in 1893 and won the first Nobel Prize ever awarded to a coordination chemist.",
+    "starTimes": [240, 480], "askHybridization": false, "expectedHybridization": "sp3d2"
+  },
+  {
+    "id": "w5-04", "world": 5, "index": 4, "name": "Hexacyanoferrate(III)", "formula": "C6FeN6³⁻",
+    "smiles": "[C-]#N[Fe+3](N#[C-])(N#[C-])(N#[C-])(N#[C-])N#[C-]",
+    "difficulty": "sandbox", "ghost": true,
+    "hint": "An Fe³⁺ centre with six cyanide ligands, each donating through carbon.",
+    "teach": "The cyanide is bound so tightly that this ion is used as the pigment Prussian blue — and it is not poisonous.",
+    "starTimes": [260, 520], "askHybridization": false, "expectedHybridization": "sp3d2"
+  }
+]
