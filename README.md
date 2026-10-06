@@ -59,11 +59,21 @@ To host them yourself (offline / locked-down deployments), copy `wasm/` and
 npm install
 npm run dev          # Vite dev server on 0.0.0.0:5173
 
-npm run typecheck    # tsc --noEmit
-npm test             # Vitest — 124 tests
-npm run build        # tsc -b && vite build  → dist/
-npm run preview      # serve the production build
+# or, for a self-contained static build (no Vite runtime needed):
+npm run build:site   # vite build → site/
+npm run serve        # serves site/ on 0.0.0.0:5173 with plain node:http
+npm run verify:build # boots the built bundle headlessly and asserts it mounts
 ```
+
+| Script | What it does |
+|---|---|
+| `npm run dev` | Vite dev server (HMR) |
+| `npm run build:site` | Production build into `site/` (self-contained) |
+| `npm run serve` | Dependency-free static server for `site/` on port 5173 |
+| `npm run start` | `build:site` + `serve` |
+| `npm run verify:build` | Loads the built bundle in jsdom (no WebGL/camera) and asserts the app mounts |
+| `npm run typecheck` | `tsc --noEmit` |
+| `npm test` | Vitest — 126 tests |
 
 No backend, no API keys, no database. Progress lives in `localStorage`
 (`jarvis-lab.campaign.v1`, `jarvis-lab.settings.v1`, `jarvis-lab.achievements.v1`).
@@ -353,9 +363,11 @@ mean it, **lower** sensitivity and increase the specific step.
 - `npm test` runs 124 Vitest specs: 40+ real molecules classified, plus CH₅, OH₃, NaCl₂, NeH,
   F₂O₃, SF₇, CCl₅ explicitly rejected with the correct chemical reason.
 - **It never shows a blank page.** A top-level `<ErrorBoundary>` turns any render crash into a
-  JARVIS diagnostic card with the message, component stack and a reload button; a window-level
-  handler catches module-load failures before React paints; critical inline CSS in `index.html`
-  means even a dead bundle renders a dark "initialising" screen instead of white.
+  JARVIS diagnostic card with the message, component stack and a reload button. An inline
+  boot watchdog in `index.html` runs *before any module is fetched*, so even a dead dev server
+  or a 404 chunk produces a readable report (error list + origin / secure-context / embedded /
+  WebGL / getUserMedia / mounted flags) instead of a stuck "Initialising…" screen. Critical
+  inline CSS means the failure state is dark, never white.
 - **It degrades instead of dying.** WebGL is probed before the 3D stage mounts (no GPU → a
   readable "3D stage offline" panel, HUD and chemistry still fully working), MediaPipe is
   imported dynamically (a failed CDN/WASM load costs you hand tracking, not the app), and every
@@ -409,6 +421,7 @@ camera access on plain http (except `localhost`).
 | Scan Mode says the detector is missing | `npm i @tensorflow/tfjs @tensorflow-models/coco-ssd` (optional deps). Gestures and voice are unaffected. |
 | No voice | Chrome/Edge only for recognition; synthesis needs a first user gesture — click anywhere once. |
 | Low FPS | Close other camera apps, lower the browser zoom, turn off orbitals, or set sensitivity lower to reduce spurious builds. |
+| Stuck on "Initialising JARVIS LAB…" | Wait 12 seconds: the boot watchdog then prints the reason (failed script, missing chunk, dead server) with environment details and a reload button. If it says the script never executed, the dev server is not running — start `npm run dev` (or `npm run start` for the static build). |
 | Blank page | Hard-reload (`Cmd/Ctrl+Shift+R`). If it appears right after `npm install`, Vite was re-optimising dependencies and the old page lost its module graph — reload and it is gone. If it persists, the app now prints the reason on screen: a red **fault card** for render errors, or an "initialising" note plus a console message when a script failed to load. |
 | "3D stage offline" | WebGL is unavailable/disabled: enable hardware acceleration in the browser settings or use Chrome/Edge. Everything except the hologram keeps working. |
 

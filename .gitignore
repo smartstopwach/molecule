@@ -11,3 +11,6 @@ coverage
 npm-debug.log*
 yarn-error.log*
 .eslintcache
+
+# Self-contained static build served by `npm run serve` (kept out of git).
+site/

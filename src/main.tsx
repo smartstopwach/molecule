@@ -22,6 +22,22 @@ import './index.css';
 import App from './App';
 import ErrorBoundary from './ui/ErrorBoundary';
 
+// Tell the boot watchdog in index.html that the bundle is alive.
+declare global {
+  interface Window {
+    __JARVIS__?: {
+      html: number;
+      main: boolean;
+      mounted: boolean;
+      errors: string[];
+      note?: (text: string) => void;
+      fatal?: (title: string, lines: string[]) => void;
+    };
+  }
+}
+
+if (window.__JARVIS__) window.__JARVIS__.main = true;
+
 const container = document.getElementById('root');
 if (!container) throw new Error('#root is missing from index.html');
 
@@ -44,7 +60,13 @@ function hasPainted(): boolean {
 }
 
 function showFatal(title: string, detail: string) {
-  if (!boot || hasPainted()) return;
+  if (hasPainted()) return;
+  // Prefer the watchdog panel in index.html — it reports environment details too.
+  if (window.__JARVIS__?.fatal) {
+    window.__JARVIS__.fatal(title, [detail]);
+    return;
+  }
+  if (!boot) return;
   boot.dataset.fatal = 'true';
   boot.innerHTML = '';
   const heading = document.createElement('div');
@@ -82,6 +104,7 @@ const observer = new MutationObserver(() => {
   // React has committed — drop the placeholder and stand the watchdog down.
   window.clearTimeout(watchdog);
   observer.disconnect();
+  if (window.__JARVIS__) window.__JARVIS__.mounted = true;
   boot?.remove();
 });
 observer.observe(container, { childList: true });
@@ -105,5 +128,6 @@ watchdog = window.setTimeout(() => {
 if (hasPainted()) {
   window.clearTimeout(watchdog);
   observer.disconnect();
+  if (window.__JARVIS__) window.__JARVIS__.mounted = true;
   boot?.remove();
 }
