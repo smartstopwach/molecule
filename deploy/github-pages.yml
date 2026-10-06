@@ -1,0 +1,93 @@
+# ─────────────────────────────────────────────────────────────────────────────
+#  GitHub Pages deploy — COPY THIS FILE TO .github/workflows/pages.yml
+#
+#  It lives outside .github/ only because the automation that maintains this
+#  branch is not allowed to create workflow files. Do this once:
+#
+#     mkdir -p .github/workflows
+#     cp deploy/github-pages.yml .github/workflows/pages.yml
+#     git add .github && git commit -m "ci: deploy to GitHub Pages" && git push
+#
+#  Then: Settings → Pages → Build and deployment → Source: "GitHub Actions".
+# ─────────────────────────────────────────────────────────────────────────────
+name: Deploy to GitHub Pages
+
+# JARVIS LAB is a pure client-side Vite app, but GitHub Pages cannot run TypeScript
+# sources: the site MUST be built first. This workflow builds `dist/` and publishes
+# it, which is why the repo root's index.html (with /src/main.tsx) must never be
+# deployed directly.
+on:
+  push:
+    branches: [main, 'arena/**']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Only one deploy at a time; queued runs are cancelled in favour of the newest.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Type-check
+        run: npm run typecheck
+
+      - name: Test
+        run: npm test
+
+      - name: Build
+        run: npm run build
+        env:
+          # Self-hosted MediaPipe assets can be wired up here if desired; by
+          # default the CDN URLs are baked in and nothing else is needed.
+          VITE_MEDIAPIPE_WASM_BASE: ''
+          VITE_HAND_MODEL_URL: ''
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - # ─────────────────────────────────────────────────────────────────────────────
+#  GitHub Pages deploy — COPY THIS FILE TO .github/workflows/pages.yml
+#
+#  It lives outside .github/ only because the automation that maintains this
+#  branch is not allowed to create workflow files. Do this once:
+#
+#     mkdir -p .github/workflows
+#     cp deploy/github-pages.yml .github/workflows/pages.yml
+#     git add .github && git commit -m "ci: deploy to GitHub Pages" && git push
+#
+#  Then: Settings → Pages → Build and deployment → Source: "GitHub Actions".
+# ─────────────────────────────────────────────────────────────────────────────
+name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

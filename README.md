@@ -391,6 +391,24 @@ mean it, **lower** sensitivity and increase the specific step.
 
 Static output in `dist/`; `base: './'` means it works from any sub-path.
 
+**GitHub Pages** — `deploy/github-pages.yml` is a ready-made workflow that builds and
+publishes `dist/` on every push to `main` (or any `arena/**` branch). One-time setup:
+
+```bash
+mkdir -p .github/workflows
+cp deploy/github-pages.yml .github/workflows/pages.yml
+git add .github && git commit -m "ci: deploy to GitHub Pages" && git push
+```
+
+1. **Settings → Pages → Build and deployment → Source: "GitHub Actions"** (not
+   "Deploy from a branch").
+2. Push (or run the **Deploy to GitHub Pages** workflow manually from the Actions tab).
+
+> ⚠️ GitHub Pages cannot compile TypeScript, so pointing Pages at the repo *root* or a
+> *branch* publishes `index.html` with `/src/main.tsx` in it and the app never starts
+> (you get the boot watchdog's "the application script never executed" report). Always
+> publish the **built `dist/`** — that is exactly what the workflow does.
+
 **Vercel** — `vercel.json` is included (build `npm run build`, output `dist`, plus a
 `Permissions-Policy: camera=(self)` header).
 
@@ -421,6 +439,7 @@ camera access on plain http (except `localhost`).
 | Scan Mode says the detector is missing | `npm i @tensorflow/tfjs @tensorflow-models/coco-ssd` (optional deps). Gestures and voice are unaffected. |
 | No voice | Chrome/Edge only for recognition; synthesis needs a first user gesture — click anywhere once. |
 | Low FPS | Close other camera apps, lower the browser zoom, turn off orbitals, or set sensitivity lower to reduce spurious builds. |
+| GitHub Pages shows "JARVIS LAB could not start — the application script never executed" | Pages is publishing the repo source instead of the build. Set **Settings → Pages → Source: GitHub Actions** and let `.github/workflows/pages.yml` publish `dist/`. |
 | Stuck on "Initialising JARVIS LAB…" | Wait 12 seconds: the boot watchdog then prints the reason (failed script, missing chunk, dead server) with environment details and a reload button. If it says the script never executed, the dev server is not running — start `npm run dev` (or `npm run start` for the static build). |
 | Blank page | Hard-reload (`Cmd/Ctrl+Shift+R`). If it appears right after `npm install`, Vite was re-optimising dependencies and the old page lost its module graph — reload and it is gone. If it persists, the app now prints the reason on screen: a red **fault card** for render errors, or an "initialising" note plus a console message when a script failed to load. |
 | "3D stage offline" | WebGL is unavailable/disabled: enable hardware acceleration in the browser settings or use Chrome/Edge. Everything except the hologram keeps working. |

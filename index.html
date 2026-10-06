@@ -206,9 +206,13 @@
         setTimeout(function () {
           if (S.mounted) return;
           if (!S.main) {
+            var host = location.hostname;
+            var staticHost = /\.github\.io$/.test(host) || /\.netlify\.app$/.test(host) || /\.vercel\.app$/.test(host);
             fatal('JARVIS LAB could not start', [
-              'The application script never executed. Most often this is a stale page or a dead dev server.',
-              'Reload the page. If it persists, run "npm install && npm run dev" (or "npm run build && npm run serve") and make sure port 5173 is serving this app.'
+              'The application script never executed.',
+              staticHost
+                ? 'This looks like a static host (GitHub Pages/Netlify/Vercel). Those cannot run TypeScript sources: deploy the BUILT output (dist/), not the repo root. This repository ships .github/workflows/pages.yml — enable Settings → Pages → Source: "GitHub Actions" and push again.'
+                : 'Most often this is a stale page or a dead dev server. Reload; if it persists run "npm install && npm run dev" (or "npm run build && npm run serve") and make sure port 5173 is serving this app.'
             ]);
           } else {
             fatal('JARVIS LAB did not mount', [
@@ -229,6 +233,6 @@
       <small id="boot-note"></small>
     </div>
     <noscript>JARVIS LAB requires JavaScript and a webcam.</noscript>
-    <script type="module" src="/src/main.tsx"></script>
+    <script type="module" src="./src/main.tsx"></script>
   </body>
 </html>
