@@ -57,7 +57,7 @@ To host them yourself (offline / locked-down deployments), copy `wasm/` and
 
 ```bash
 npm install
-npm run dev          # Vite dev server on 0.0.0.0:5173
+npm run dev          # Vite dev server  → http://localhost:5173/dev.html
 
 # or, for a self-contained static build (no Vite runtime needed):
 npm run build:site   # vite build → site/
@@ -389,55 +389,51 @@ mean it, **lower** sensitivity and increase the specific step.
 
 ## Deploying
 
-**It is a normal static site.** `npm run build` (or `npm run build:docs`) produces plain
-HTML/CSS/JS in `dist/` (or `docs/`) — no server, no backend, no functions. Upload that
-folder anywhere and it runs.
+**The published site is already in the repo root — plain HTML, CSS and JS:**
 
-### GitHub Pages — the simple way (no Actions, no build step on GitHub)
+```
+index.html      ← the built app (plain HTML)
+assets/         ← its JavaScript and CSS
+```
 
-The built site is committed to **`docs/`**, so GitHub just serves files:
+That is a completely normal static site. GitHub Pages (or any host) serves it with
+**no build step, no CI and no configuration**.
+
+### GitHub Pages — default settings, nothing to configure
+
+1. **Settings → Pages → Build and deployment**
+2. **Source:** Deploy from a branch · **Branch:** your branch · **Folder:** **`/ (root)`**
+3. **Save** → live at `https://<user>.github.io/<repo>/` (HTTPS, so the camera works).
+
+### Any other static host
+
+Upload *these two things* — `index.html` and the `assets/` folder — to Netlify, Vercel,
+S3, Cloudflare Pages, Surge, or just serve the folder locally:
+
+```bash
+npm run serve      # serves the repo root on http://0.0.0.0:5173
+```
+
+### After changing the code
 
 ```bash
 npm install
-npm run build:docs     # builds into docs/
-git add docs && git commit -m "chore: rebuild site" && git push
+npm run publish    # rebuilds and refreshes index.html + assets/
+git add index.html assets && git commit -m "rebuild" && git push
 ```
 
-Then once, in the repo: **Settings → Pages → Build and deployment**
-- **Source:** Deploy from a branch
-- **Branch:** your branch (e.g. `main` or `arena/4e92c516-molecule`)
-- **Folder:** **`/docs`** ← the important bit
-- **Save**
-
-The site appears at `https://<user>.github.io/<repo>/` within a minute. Rebuild and push
-`docs/` whenever you change something.
-
-> ⚠️ Do **not** point Pages at the repo root (`/`): that publishes `index.html` with
-> `/src/main.tsx` in it. GitHub cannot compile TypeScript, so the app never starts and you
-> get a boot report saying *"the application script never executed"*. Always publish
-> `docs/` (or `dist/` via Actions).
-
-### Optional: build on GitHub with Actions
-
-If you would rather not commit build output, `deploy/github-pages.yml` builds `dist/` and
-publishes it for you:
+### For development only
 
 ```bash
-mkdir -p .github/workflows
-cp deploy/github-pages.yml .github/workflows/pages.yml
-git add .github && git commit -m "ci: deploy to GitHub Pages" && git push
+npm run dev        # → http://localhost:5173/dev.html
 ```
 
-Then set **Settings → Pages → Source: "GitHub Actions"**.
+`dev.html` is the Vite entry; the published `index.html` is generated from it, so the
+dev server never overwrites the live site.
 
-### Vercel / Netlify / any static host
-
-- **Vercel**: `vercel.json` is included (build `npm run build`, output `dist`).
-- **Netlify**: `netlify.toml` is included (build `npm run build`, publish `dist`).
-- **Anything else**: `npm run build` then upload `dist/` (S3, Cloudflare Pages, Surge, a
-  USB stick — anything that serves files).
-
-Serve over **HTTPS**; browsers refuse camera access on plain HTTP (except `localhost`).
+> ℹ️ CI is entirely optional. If you would rather let GitHub build on every push, copy
+> `deploy/github-pages.yml` to `.github/workflows/pages.yml` and set Pages → Source:
+> "GitHub Actions" (it publishes `dist/`).
 
 ## Troubleshooting
 

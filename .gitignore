@@ -12,6 +12,9 @@ npm-debug.log*
 yarn-error.log*
 .eslintcache
 
-# Scratch static build for the sandbox preview (not published).
+# Scratch build folders (not published).
 site/
-# NOTE: docs/ is intentionally TRACKED — it is the built site GitHub Pages serves.
+docs/
+dist/
+# NOTE: ./index.html and ./assets at the repo ROOT are intentionally TRACKED —
+# they are the published site that GitHub Pages serves.
