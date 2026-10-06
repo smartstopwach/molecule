@@ -27,7 +27,7 @@ export default defineConfig({
   },
   test: {
     environment: 'node',
-    include: ['src/tests/**/*.test.ts'],
+    include: ['src/tests/**/*.test.ts', 'src/tests/**/*.test.tsx'],
     globals: true,
   },
   // WASM / model loading for MediaPipe is done from a CDN at runtime, so we

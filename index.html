@@ -15,9 +15,45 @@
       href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap"
       rel="stylesheet"
     />
+    <!--
+      Critical inline styles: if the JS bundle ever fails to load, the visitor sees
+      the dark lab with an "initialising" note instead of an unstyled white page.
+    -->
+    <style>
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        background: #02080d;
+        color: #38e8ff;
+      }
+      #boot {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        font-family: 'Rajdhani', 'Share Tech Mono', ui-monospace, monospace;
+        letter-spacing: 0.28em;
+        text-transform: uppercase;
+        font-size: 13px;
+        text-align: center;
+        padding: 24px;
+      }
+      #boot small {
+        letter-spacing: 0.14em;
+        text-transform: none;
+        opacity: 0.6;
+        max-width: 460px;
+        line-height: 1.5;
+      }
+    </style>
   </head>
   <body class="bg-jarvis-dark text-jarvis-cyan">
     <div id="root"></div>
+    <div id="boot">Initialising JARVIS LAB…</div>
     <noscript>JARVIS LAB requires JavaScript and a webcam.</noscript>
     <script type="module" src="/src/main.tsx"></script>
   </body>

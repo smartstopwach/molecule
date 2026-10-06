@@ -60,7 +60,7 @@ npm install
 npm run dev          # Vite dev server on 0.0.0.0:5173
 
 npm run typecheck    # tsc --noEmit
-npm test             # Vitest — 115 tests
+npm test             # Vitest — 124 tests
 npm run build        # tsc -b && vite build  → dist/
 npm run preview      # serve the production build
 ```
@@ -350,8 +350,16 @@ mean it, **lower** sensitivity and increase the specific step.
   Okabe–Ito colour-blind palette, large hit targets, full keyboard control of the
   **settings and menus only** (`,` settings, `o` orbitals, `l` labels, `g` ghost, `Esc` close,
   `Ctrl/Cmd+Z` undo). Molecule building stays gesture-first by design.
-- `npm test` runs 115 Vitest specs: 40+ real molecules classified, plus CH₅, OH₃, NaCl₂, NeH,
+- `npm test` runs 124 Vitest specs: 40+ real molecules classified, plus CH₅, OH₃, NaCl₂, NeH,
   F₂O₃, SF₇, CCl₅ explicitly rejected with the correct chemical reason.
+- **It never shows a blank page.** A top-level `<ErrorBoundary>` turns any render crash into a
+  JARVIS diagnostic card with the message, component stack and a reload button; a window-level
+  handler catches module-load failures before React paints; critical inline CSS in `index.html`
+  means even a dead bundle renders a dark "initialising" screen instead of white.
+- **It degrades instead of dying.** WebGL is probed before the 3D stage mounts (no GPU → a
+  readable "3D stage offline" panel, HUD and chemistry still fully working), MediaPipe is
+  imported dynamically (a failed CDN/WASM load costs you hand tracking, not the app), and every
+  2D-canvas helper tolerates a null context and a missing `ctx.roundRect` (pre-2022 browsers).
 
 ---
 
@@ -393,6 +401,7 @@ camera access on plain http (except `localhost`).
 
 | Symptom | Fix |
 |---|---|
+|---|---|
 | Stuck on "CAMERA ACCESS REQUIRED" | Click the camera icon in the address bar → Allow → *Retry access*. Check no other app holds the camera. |
 | Cursor is mirrored / gestures feel reversed | Settings → **Mirror video** (on by default, selfie view). |
 | Hands detected but nothing places | You may be pinching on top of an atom (that *grabs*). Point at empty space, then pinch. |
@@ -400,6 +409,8 @@ camera access on plain http (except `localhost`).
 | Scan Mode says the detector is missing | `npm i @tensorflow/tfjs @tensorflow-models/coco-ssd` (optional deps). Gestures and voice are unaffected. |
 | No voice | Chrome/Edge only for recognition; synthesis needs a first user gesture — click anywhere once. |
 | Low FPS | Close other camera apps, lower the browser zoom, turn off orbitals, or set sensitivity lower to reduce spurious builds. |
+| Blank page | Hard-reload (`Cmd/Ctrl+Shift+R`). If it appears right after `npm install`, Vite was re-optimising dependencies and the old page lost its module graph — reload and it is gone. If it persists, the app now prints the reason on screen: a red **fault card** for render errors, or an "initialising" note plus a console message when a script failed to load. |
+| "3D stage offline" | WebGL is unavailable/disabled: enable hardware acceleration in the browser settings or use Chrome/Edge. Everything except the hologram keeps working. |
 
 Keyboard: `,` settings · `o` orbitals · `l` labels · `g` ghost guide · `Ctrl/Cmd+Z` undo ·
 `Esc` close overlays.

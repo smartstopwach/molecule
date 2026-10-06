@@ -8,6 +8,7 @@
 import { useMemo, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { AdditiveBlending, BufferGeometry, CanvasTexture, Float32BufferAttribute, Points } from 'three';
+import { blankCanvas, makeCanvas } from '../canvas2d';
 
 export interface ParticlesProps {
   count?: number;
@@ -41,10 +42,8 @@ export function Particles({ count = 900, radius = 22, color = '#38e8ff', energy 
 
   const sprite = useMemo(() => {
     const size = 64;
-    const canvas = document.createElement('canvas');
-    canvas.width = size;
-    canvas.height = size;
-    const ctx = canvas.getContext('2d')!;
+    const { canvas, ctx } = makeCanvas(size, size);
+    if (!ctx) return new CanvasTexture(blankCanvas(1, 1));
     const grad = ctx.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
     grad.addColorStop(0, 'rgba(255,255,255,1)');
     grad.addColorStop(0.25, `${color}cc`);

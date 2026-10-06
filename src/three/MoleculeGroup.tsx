@@ -17,21 +17,23 @@ import { analyzeMolecule, getBond, neighboursOf } from '../chemistry/chemistryEn
 import { nameMolecule } from '../chemistry/naming';
 import { idealBondLength, layoutMolecule } from './vsepSolver';
 import { arAnchor } from './cameraRig';
+import { blankCanvas, makeCanvas, roundRectPath } from './canvas2d';
 import type { Hybridization } from '../chemistry/hybridization';
 
 /** Canvas-texture "HUD plate" that floats above the molecule. */
 function useTextPlate(lines: string[], width = 512) {
   return useMemo(() => {
-    const canvas = document.createElement('canvas');
-    canvas.width = width;
-    canvas.height = Math.max(64, 56 * lines.length);
-    const ctx = canvas.getContext('2d')!;
+    const { canvas, ctx } = makeCanvas(width, Math.max(64, 56 * lines.length));
+    if (!ctx) {
+      // No 2D context: fall back to an invisible plate rather than crashing.
+      const tex = new CanvasTexture(blankCanvas(1, 1));
+      return { texture: tex, aspect: width / Math.max(64, 56 * lines.length) };
+    }
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = 'rgba(3,18,27,0.72)';
     ctx.strokeStyle = 'rgba(56,232,255,0.55)';
     ctx.lineWidth = 3;
-    ctx.beginPath();
-    ctx.roundRect(4, 4, canvas.width - 8, canvas.height - 8, 12);
+    roundRectPath(ctx, 4, 4, canvas.width - 8, canvas.height - 8, 12);
     ctx.fill();
     ctx.stroke();
     lines.forEach((line, i) => {
@@ -304,10 +306,12 @@ function angleTexture(angle: number): CanvasTexture {
   const key = angle.toFixed(1);
   const cached = angleTextureCache.get(key);
   if (cached) return cached;
-  const canvas = document.createElement('canvas');
-  canvas.width = 256;
-  canvas.height = 112;
-  const ctx = canvas.getContext('2d')!;
+  const { canvas, ctx } = makeCanvas(256, 112);
+  if (!ctx) {
+    const empty = new CanvasTexture(blankCanvas(1, 1));
+    angleTextureCache.set(key, empty);
+    return empty;
+  }
   ctx.clearRect(0, 0, 256, 112);
   ctx.font = '700 52px "Rajdhani", system-ui, sans-serif';
   ctx.fillStyle = '#ffc76b';

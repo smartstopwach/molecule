@@ -13,6 +13,8 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
+import ErrorBoundary from './ui/ErrorBoundary';
+import { isWebGLAvailable } from './three/webgl';
 import { CameraGate } from './camera/CameraGate';
 import { HandOverlay } from './camera/HandOverlay';
 import { Scene } from './three/Scene';
@@ -100,6 +102,9 @@ export default function App() {
     busy: false,
     result: null,
   });
+
+  /** Probed once: a missing WebGL context must degrade, not blank the screen. */
+  const [webglAvailable] = useState(() => isWebGLAvailable());
 
   const settings = useGameStore((s) => s.settings);
   const mode = useGameStore((s) => s.mode);
@@ -679,9 +684,24 @@ export default function App() {
       />
       <div className="absolute inset-0 bg-scanline opacity-20" />
 
-      {/* layer 1 — 3D hologram */}
+      {/* layer 1 — 3D hologram (never allowed to take the HUD down with it) */}
       <div className="absolute inset-0">
-        <Scene transparent />
+        {webglAvailable ? (
+          <ErrorBoundary label="3D renderer" compact>
+            <Scene transparent />
+          </ErrorBoundary>
+        ) : (
+          <div className="flex h-full w-full items-center justify-center p-6">
+            <div className="max-w-[420px] rounded-lg border border-jarvis-orange/40 bg-black/55 p-4 text-center font-hud">
+              <p className="text-[13px] uppercase tracking-[0.24em] text-jarvis-orange">3D stage offline</p>
+              <p className="mt-1 text-[12px] leading-snug text-jarvis-cyan/75">
+                WebGL is unavailable in this browser, so the hologram is disabled. Gestures,
+                chemistry rules, JARVIS and every mode still work — enable hardware
+                acceleration (or try Chrome/Edge) to bring the molecules back.
+              </p>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* layer 2 — HUD */}

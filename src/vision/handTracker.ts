@@ -10,8 +10,32 @@
  *  • Everything runs on-device. Frames never leave the browser.
  */
 
-import { FilesetResolver, HandLandmarker, type HandLandmarkerResult } from '@mediapipe/tasks-vision';
+import type { HandLandmarker as HandLandmarkerType, HandLandmarkerResult } from '@mediapipe/tasks-vision';
 import type { HandFrame } from './gestures.types';
+
+/**
+ * The vendor bundle is imported DYNAMICALLY, inside `init()`.
+ *
+ * MediaPipe ships a 4 MB WASM bundle; if it fails to load (offline, CSP, corporate
+ * proxy) a static import would break the whole module graph — i.e. a blank page.
+ * Loading it on demand means the worst case is "no hand tracking", and the rest of
+ * the lab (chemistry, HUD, JARVIS, keyboard fallback) keeps working.
+ */
+type VisionModule = typeof import('@mediapipe/tasks-vision');
+let visionModule: VisionModule | null = null;
+let visionLoadFailed: string | null = null;
+
+async function loadVision(): Promise<VisionModule> {
+  if (visionModule) return visionModule;
+  if (visionLoadFailed) throw new Error(visionLoadFailed);
+  try {
+    visionModule = await import('@mediapipe/tasks-vision');
+    return visionModule;
+  } catch (err) {
+    visionLoadFailed = `Hand tracking model could not be loaded (${String((err as Error)?.message ?? err)}).`;
+    throw new Error(visionLoadFailed);
+  }
+}
 
 const WASM_BASE =
   (import.meta.env?.VITE_MEDIAPIPE_WASM_BASE as string | undefined) ??
@@ -28,7 +52,7 @@ export interface HandTrackingResult {
 }
 
 export class HandTracker {
-  private landmarker: HandLandmarker | null = null;
+  private landmarker: HandLandmarkerType | null = null;
   private lastVideoTime = -1;
   private initPromise: Promise<void> | null = null;
 
@@ -53,27 +77,29 @@ export class HandTracker {
     if (this.landmarker) return;
     if (this.initPromise) return this.initPromise;
     this.initPromise = (async () => {
+      const { FilesetResolver, HandLandmarker } = await loadVision();
       const fileset = await FilesetResolver.forVisionTasks(WASM_BASE);
-      this.landmarker = await HandLandmarker.createFromOptions(fileset, {
-        baseOptions: { modelAssetPath: MODEL_URL, delegate: 'GPU' },
-        runningMode: 'VIDEO',
+      const gpuOptions = {
+        baseOptions: { modelAssetPath: MODEL_URL, delegate: 'GPU' as const },
+        runningMode: 'VIDEO' as const,
         numHands,
         minHandDetectionConfidence: 0.5,
         minHandPresenceConfidence: 0.5,
         minTrackingConfidence: 0.5,
-      });
-    })().catch(async (err) => {
-      // GPU delegate can fail on some drivers — retry on CPU before giving up.
-      this.initPromise = null;
-      if (String(err).includes('GPU') || String(err).includes('delegate')) {
-        const fileset = await FilesetResolver.forVisionTasks(WASM_BASE);
+      };
+      try {
+        this.landmarker = await HandLandmarker.createFromOptions(fileset, gpuOptions);
+      } catch (err) {
+        // The GPU delegate fails on some drivers — fall back to CPU once.
+        const message = String(err);
+        if (!/gpu|delegate/i.test(message)) throw err;
         this.landmarker = await HandLandmarker.createFromOptions(fileset, {
+          ...gpuOptions,
           baseOptions: { modelAssetPath: MODEL_URL, delegate: 'CPU' },
-          runningMode: 'VIDEO',
-          numHands,
         });
-        return;
       }
+    })().catch((err) => {
+      this.initPromise = null; // allow the UI's retry button to try again
       throw err;
     });
     return this.initPromise;

@@ -6,8 +6,20 @@
  */
 
 import { CanvasTexture, LinearFilter, type Texture } from 'three';
+import { blankCanvas, makeCanvas } from './canvas2d';
 
 const cache = new Map<string, Texture>();
+
+/** Shared fallback so a missing 2D context never leaves a component with `null`. */
+let fallback: Texture | null = null;
+function fallbackTexture(): Texture {
+  if (!fallback) {
+    fallback = new CanvasTexture(blankCanvas(1, 1));
+    fallback.minFilter = LinearFilter;
+    fallback.magFilter = LinearFilter;
+  }
+  return fallback;
+}
 
 export function labelTexture(text: string, color = '#eaf8ff', background = 'rgba(0,0,0,0)'): Texture {
   const key = `${text}|${color}|${background}`;
@@ -15,10 +27,8 @@ export function labelTexture(text: string, color = '#eaf8ff', background = 'rgba
   if (cached) return cached;
 
   const size = 128;
-  const canvas = document.createElement('canvas');
-  canvas.width = size;
-  canvas.height = size;
-  const ctx = canvas.getContext('2d')!;
+  const { canvas, ctx } = makeCanvas(size, size);
+  if (!ctx) return fallbackTexture();
   ctx.clearRect(0, 0, size, size);
   if (background !== 'rgba(0,0,0,0)') {
     ctx.fillStyle = background;
@@ -48,10 +58,8 @@ export function glowTexture(color = '#38e8ff'): Texture {
   const cached = cache.get(key);
   if (cached) return cached;
   const size = 128;
-  const canvas = document.createElement('canvas');
-  canvas.width = size;
-  canvas.height = size;
-  const ctx = canvas.getContext('2d')!;
+  const { canvas, ctx } = makeCanvas(size, size);
+  if (!ctx) return fallbackTexture();
   const grad = ctx.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
   grad.addColorStop(0, color);
   grad.addColorStop(0.35, `${color}aa`);
