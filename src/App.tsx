@@ -689,7 +689,10 @@ export default function App() {
         <TopBar cameraLive={cameraReady && vision.ready} />
 
         <div className="flex min-h-0 flex-1 gap-2">
-          <ElementPalette />
+          {/* On narrow screens the side panels step aside so the stage stays usable. */}
+          <div className="hidden min-h-0 md:flex">
+            <ElementPalette />
+          </div>
 
           <div className="flex min-h-0 flex-1 flex-col items-center justify-between gap-2">
             <ModeOverlay
@@ -774,7 +777,9 @@ export default function App() {
             </div>
           </div>
 
-          <JarvisPanel />
+          <div className="hidden min-h-0 lg:flex">
+            <JarvisPanel />
+          </div>
         </div>
 
         <GestureHints gesture={gesture} fingerCount={fingerCount} />

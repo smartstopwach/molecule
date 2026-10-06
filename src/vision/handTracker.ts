@@ -32,6 +32,18 @@ export class HandTracker {
   private lastVideoTime = -1;
   private initPromise: Promise<void> | null = null;
 
+  /**
+   * Inference downscale (spec §12): the model only needs ~640×360, and running it
+   * on a 1280×720 frame costs roughly four times the pixels for no accuracy gain.
+   * The canvas is reused between frames so there is no per-frame allocation.
+   */
+  private scratch: HTMLCanvasElement | null = null;
+  private scratchCtx: CanvasRenderingContext2D | null = null;
+  /** Flipped off automatically if a browser refuses to read from the canvas. */
+  private downscale = true;
+  readonly inferenceWidth = 640;
+  readonly inferenceHeight = 360;
+
   get ready(): boolean {
     return !!this.landmarker;
   }
@@ -67,9 +79,27 @@ export class HandTracker {
     return this.initPromise;
   }
 
+  /** Copy the newest video frame into the downscaled scratch canvas. */
+  private frame(video: HTMLVideoElement): HTMLCanvasElement | null {
+    if (typeof document === 'undefined') return null;
+    if (!this.scratch) {
+      this.scratch = document.createElement('canvas');
+      this.scratch.width = this.inferenceWidth;
+      this.scratch.height = this.inferenceHeight;
+      this.scratchCtx = this.scratch.getContext('2d', { alpha: false, willReadFrequently: false });
+    }
+    const ctx = this.scratchCtx;
+    if (!ctx) return null;
+    ctx.drawImage(video, 0, 0, this.inferenceWidth, this.inferenceHeight);
+    return this.scratch;
+  }
+
   /**
    * Run inference. Returns an empty result (not an error) when the video has not
    * produced a new frame yet, which keeps the loop cheap.
+   *
+   * Landmarks come back in the downscaled frame's normalised space, which is the
+   * same 0..1 space the video uses — so no coordinate conversion is needed.
    */
   detect(video: HTMLVideoElement, timestampMs: number): HandTrackingResult {
     if (!this.landmarker) return { hands: [], inferenceMs: 0 };
@@ -77,12 +107,20 @@ export class HandTracker {
     if (video.currentTime === this.lastVideoTime) return { hands: [], inferenceMs: 0 };
     this.lastVideoTime = video.currentTime;
 
+    const scratch = this.downscale ? this.frame(video) : null;
     const t0 = performance.now();
     let raw: HandLandmarkerResult;
     try {
-      raw = this.landmarker.detectForVideo(video, timestampMs);
+      raw = this.landmarker.detectForVideo(scratch ?? video, timestampMs);
     } catch {
-      return { hands: [], inferenceMs: 0 };
+      if (!scratch) return { hands: [], inferenceMs: 0 };
+      // Some drivers refuse canvas sources — fall back to the video element once.
+      this.downscale = false;
+      try {
+        raw = this.landmarker.detectForVideo(video, timestampMs);
+      } catch {
+        return { hands: [], inferenceMs: 0 };
+      }
     }
     const inferenceMs = performance.now() - t0;
 

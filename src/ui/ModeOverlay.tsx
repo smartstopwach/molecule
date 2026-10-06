@@ -12,7 +12,8 @@ import { useMemo } from 'react';
 import { useGameStore } from '../store/useGameStore';
 import { useMoleculeStore } from '../store/useMoleculeStore';
 import { getLevel, levelDisplayName, WORLDS } from '../game/campaign';
-import { HYBRID_LABELS, type QuizQuestion } from '../game/quiz';
+import { FINGER_TO_HYBRID, type QuizQuestion } from '../game/quiz';
+import { hybridLabel } from '../chemistry/hybridization';
 import { REACTION_TABLE, formatEquation, REACTION_TYPES } from '../chemistry/reactionEngine';
 import { playSfx } from '../jarvis/sfx';
 
@@ -118,7 +119,7 @@ export function ModeOverlay(props: ModeOverlayProps) {
             <div className="mt-1 flex gap-1">
               {[1, 2, 3, 4, 5].map((n) => (
                 <span key={n} className="rounded border border-jarvis-violet/30 px-2 py-0.5 font-mono text-[11px] text-jarvis-violet/85">
-                  {n} · {HYBRID_LABELS[Object.keys(HYBRID_LABELS)[n - 1]] ?? ''}
+                  {n} · {hybridLabel(FINGER_TO_HYBRID[n])}
                 </span>
               ))}
             </div>
